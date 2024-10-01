@@ -3,8 +3,6 @@
 //
 //  Created by MJ (Ruit) on 1/1/19.
 //
-
-#include <Includes/obfuscate.h>
 #include "KittyMemory.h"
 
 using KittyMemory::Memory_Status;
