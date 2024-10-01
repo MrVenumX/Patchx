@@ -7,6 +7,7 @@
 #include "Includes/Logger.h"
 #include "Includes/Utils.h"
 #include "Includes/Macros.h"
+#include "Il2cpp/Il2cpp.hpp"
 
 // DECL_HOOK(bool, MakeMeReturnTrue) {
 //     return true;
@@ -19,12 +20,21 @@ void *hack_thread(void *)
     {
         libBase = (uintptr_t)GlossGetLibBias(libName);
         sleep(1);
+        if (Utils::isUnityGame())
+            Il2cppWrapper::initialize();
         LOGI("Checking target library %s", libName);
     } while (!Utils::isLibraryLoaded(libName));
     LOGI("Patchx starting modification now...");
     // Modification start here...
 
-    // Note: You can use GlossHook for advanced Patching
+    // const MoneyMethod Il2cppClassDef.PlayerClass->getMethod("getMoney", 1);
+    // # Please read Il2cpp/Aetherim/README.md for more information.
+    // # By this now you can hook Unity Method without offset and less update.
+    // # Unity Method basicly have information on sturct Il2cppMethodInfo on Il2cpp Header
+    // - So, for this case we will need methodPointer.
+    // DobbyHook((void *)MoneyMethod->methodPointer, (void *)hook_getMoney, (void **)&orig_getMoney);
+
+    // NOTE: You can use GlossHook for advanced Patching
     // - You can see that on `<project-path>/include/GlossHook/Gloss.h`.
 
     // Macros Method //
