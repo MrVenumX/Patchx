@@ -8,7 +8,8 @@
 #include "MemoryPatch.h"
 #include "Includes/Logger.h"
 
-MemoryPatch::MemoryPatch() {
+MemoryPatch::MemoryPatch()
+{
     _address = 0;
     _size = 0;
     _orig_code.clear();
@@ -16,14 +17,16 @@ MemoryPatch::MemoryPatch() {
 }
 
 MemoryPatch::MemoryPatch(const char *libraryName, uintptr_t address,
-                         const void *patch_code, size_t patch_size, bool useMapCache) {
+                         const void *patch_code, size_t patch_size, bool useMapCache)
+{
     MemoryPatch();
 
     if (libraryName == NULL || address == 0 || patch_code == NULL || patch_size < 1)
         return;
 
     _address = KittyMemory::getAbsoluteAddress(libraryName, address, useMapCache);
-    if (_address == 0) return;
+    if (_address == 0)
+        return;
 
     _size = patch_size;
 
@@ -36,7 +39,8 @@ MemoryPatch::MemoryPatch(const char *libraryName, uintptr_t address,
 }
 
 MemoryPatch::MemoryPatch(uintptr_t absolute_address,
-                         const void *patch_code, size_t patch_size) {
+                         const void *patch_code, size_t patch_size)
+{
     MemoryPatch();
 
     if (absolute_address == 0 || patch_code == NULL || patch_size < 1)
@@ -53,21 +57,24 @@ MemoryPatch::MemoryPatch(uintptr_t absolute_address,
     KittyMemory::memRead(&_orig_code[0], reinterpret_cast<const void *>(_address), patch_size);
 }
 
-MemoryPatch::~MemoryPatch() {
+MemoryPatch::~MemoryPatch()
+{
     // clean up
     _orig_code.clear();
     _patch_code.clear();
 }
 
 MemoryPatch MemoryPatch::createWithHex(const char *libraryName, uintptr_t address,
-                                       std::string hex, bool useMapCache) {
+                                       std::string hex, bool useMapCache)
+{
     MemoryPatch patch;
 
     if (libraryName == NULL || address == 0 || !KittyUtils::validateHexString(hex))
         return patch;
 
     patch._address = KittyMemory::getAbsoluteAddress(libraryName, address, useMapCache);
-    if (patch._address == 0) return patch;
+    if (patch._address == 0)
+        return patch;
 
     patch._size = hex.length() / 2;
 
@@ -83,7 +90,8 @@ MemoryPatch MemoryPatch::createWithHex(const char *libraryName, uintptr_t addres
     return patch;
 }
 
-MemoryPatch MemoryPatch::createWithHex(uintptr_t absolute_address, std::string hex) {
+MemoryPatch MemoryPatch::createWithHex(uintptr_t absolute_address, std::string hex)
+{
     MemoryPatch patch;
 
     if (absolute_address == 0 || !KittyUtils::validateHexString(hex))
@@ -104,36 +112,43 @@ MemoryPatch MemoryPatch::createWithHex(uintptr_t absolute_address, std::string h
     return patch;
 }
 
-bool MemoryPatch::isValid() const {
-    return (_address != 0 && _size > 0
-            && _orig_code.size() == _size && _patch_code.size() == _size);
+bool MemoryPatch::isValid() const
+{
+    return (_address != 0 && _size > 0 && _orig_code.size() == _size && _patch_code.size() == _size);
 }
 
-size_t MemoryPatch::get_PatchSize() const {
+size_t MemoryPatch::get_PatchSize() const
+{
     return _size;
 }
 
-uintptr_t MemoryPatch::get_TargetAddress() const {
+uintptr_t MemoryPatch::get_TargetAddress() const
+{
     return _address;
 }
 
-bool MemoryPatch::Restore() {
-    if (!isValid()) return false;
-    //LOGI("Restore %i", isLeeched);
+bool MemoryPatch::Restore()
+{
+    if (!isValid())
+        return false;
+    // LOGI("Restore %i", isLeeched);
     return KittyMemory::memWrite(reinterpret_cast<void *>(_address), &_orig_code[0], _size) ==
            Memory_Status::SUCCESS;
 }
 
-bool MemoryPatch::Modify() {
-    if (!isValid()) return false;
-    //LOGI("Modify");
+bool MemoryPatch::Modify()
+{
+    if (!isValid())
+        return false;
+    // LOGI("Modify");
     return (KittyMemory::memWrite(reinterpret_cast<void *>(_address), &_patch_code[0], _size) ==
             Memory_Status::SUCCESS);
 }
 
-std::string MemoryPatch::get_CurrBytes() {
+std::string MemoryPatch::get_CurrBytes()
+{
     if (!isValid())
-        _hexString = std::string(OBFUSCATE("0xInvalid"));
+        _hexString = std::string("0xInvalid");
     else
         _hexString = KittyMemory::read2HexStr(reinterpret_cast<const void *>(_address), _size);
 

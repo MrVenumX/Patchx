@@ -46,7 +46,7 @@ void patchOffset(const char *fileName, uint64_t offset, std::string hexBytes, bo
     // Check if offset exists in the offsetVector
     if (std::find(offsetVector.begin(), offsetVector.end(), offset) != offsetVector.end())
     {
-        // LOGE(OBFUSCATE("Already exists"));
+        // LOGE("Already exists");
         std::vector<uint64_t>::iterator itr = std::find(offsetVector.begin(), offsetVector.end(), offset);
         patch = memoryPatches[std::distance(offsetVector.begin(), itr)]; // Get index of memoryPatches vector
     }
@@ -54,26 +54,26 @@ void patchOffset(const char *fileName, uint64_t offset, std::string hexBytes, bo
     {
         memoryPatches.push_back(patch);
         offsetVector.push_back(offset);
-        // LOGI(OBFUSCATE("Added"));
+        // LOGI("Added");
     }
 
     if (!patch.isValid())
     {
-        LOGE(OBFUSCATE("Failing offset: 0x%llu, please re-check the hex"), offset);
+        LOGE("Failing offset: 0x%llu, please re-check the hex", offset);
         return;
     }
     if (isOn)
     {
         if (!patch.Modify())
         {
-            LOGE(OBFUSCATE("Something went wrong while patching this offset: 0x%llu"), offset);
+            LOGE("Something went wrong while patching this offset: 0x%llu", offset);
         }
     }
     else
     {
         if (!patch.Restore())
         {
-            LOGE(OBFUSCATE("Something went wrong while restoring this offset: 0x%llu"), offset);
+            LOGE("Something went wrong while restoring this offset: 0x%llu", offset);
         }
     }
 }
@@ -86,7 +86,7 @@ void patchOffsetSym(uintptr_t absolute_address, std::string hexBytes, bool isOn)
     // Check if offset exists in the offsetVector
     if (std::find(offsetVector.begin(), offsetVector.end(), absolute_address) != offsetVector.end())
     {
-        // LOGE(OBFUSCATE("Already exists"));
+        // LOGE("Already exists");
         std::vector<uint64_t>::iterator itr = std::find(offsetVector.begin(), offsetVector.end(), absolute_address);
         patch = memoryPatches[std::distance(offsetVector.begin(), itr)]; // Get index of memoryPatches vector
     }
@@ -94,26 +94,26 @@ void patchOffsetSym(uintptr_t absolute_address, std::string hexBytes, bool isOn)
     {
         memoryPatches.push_back(patch);
         offsetVector.push_back(absolute_address);
-        // LOGI(OBFUSCATE("Added"));
+        // LOGI("Added");
     }
 
     if (!patch.isValid())
     {
-        LOGE(OBFUSCATE("Failing offset: 0x%llu, please re-check the hex"), absolute_address);
+        LOGE("Failing offset: 0x%llu, please re-check the hex", absolute_address);
         return;
     }
     if (isOn)
     {
         if (!patch.Modify())
         {
-            LOGE(OBFUSCATE("Something went wrong while patching this offset: 0x%llu"), absolute_address);
+            LOGE("Something went wrong while patching this offset: 0x%llu", absolute_address);
         }
     }
     else
     {
         if (!patch.Restore())
         {
-            LOGE(OBFUSCATE("Something went wrong while restoring this offset: 0x%llu"), absolute_address);
+            LOGE("Something went wrong while restoring this offset: 0x%llu", absolute_address);
         }
     }
 }
@@ -136,13 +136,13 @@ void patchOffsetSym(uintptr_t absolute_address, std::string hexBytes, bool isOn)
 #define RESTORE_SYM(sym) patchOffsetSym((uintptr_t)dlsym(dlopen(libName, 4), OBFUSCATE(sym)), "", false)
 #define RESTORE_LIB_SYM(lib, sym) patchOffsetSym((uintptr_t)dlsym(dlopen(lib, 4), OBFUSCATE(sym)), "", false)
 
-#define SET_TO(__a1, __a2) *(void**)&(__a1) = (void*)(__a2)
+#define SET_TO(__a1, __a2) *(void **)&(__a1) = (void *)(__a2)
 
-#define DECL_HOOK(_ret, _name, ...)   \
+#define DECL_HOOK(_ret, _name, ...)    \
     _ret (*orig_##_name)(__VA_ARGS__); \
     _ret hook_##_name(__VA_ARGS__)
 
-#define DECL_HOOKv(_name, ...)        \
+#define DECL_HOOKv(_name, ...)         \
     void (*orig_##_name)(__VA_ARGS__); \
     void hook_##_name(__VA_ARGS__)
 #endif // ANDROID_MOD_MENU_MACROS_H
