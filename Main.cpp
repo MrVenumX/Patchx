@@ -61,9 +61,8 @@ void *hack_thread(void *)
 __attribute__((constructor)) void lib_main()
 {
     pthread_t hacks;
-    pthread_create(&hacks, NULL, hack_thread, NULL);
-
-
+    pthread_create(&hacks, nullptr, hack_thread, nullptr);
+}
 
 extern "C"
 {

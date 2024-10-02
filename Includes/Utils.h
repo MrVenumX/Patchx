@@ -1,13 +1,13 @@
 #ifndef UTILS
 #define UTILS
 
-#include <unistd.h>
-#include <dirent.h>
 #include <cstdio>
 #include <cstring>
-#include <string>
 #include <cstdlib>
+#include <cstddef>
 #include <dlfcn.h>
+#include <unistd.h>
+#include <dirent.h>
 #include "Logger.h"
 
 bool isUnity = false;
@@ -22,6 +22,8 @@ typedef uint8_t BYTE;
 typedef float FLOAT;
 typedef double DOUBLE;
 
+typedef __SIZE_TYPE__ size_t;
+
 struct AddressMap
 {
     ADDRESS startAddress;
@@ -32,15 +34,14 @@ namespace Utils
 {
     AddressMap findLibrary(const char *library)
     {
-        char filename[0xFF] = {0},
-             buffer[1024] = {0};
-        FILE *fp = NULL;
+        char filename[0xFF] = {0}, buffer[1024] = {0};
+        FILE *fp = nullptr;
         AddressMap addrMap;
 
         sprintf(filename, "/proc/self/maps");
 
         fp = fopen(filename, "rt");
-        if (fp == NULL)
+        if (fp == nullptr)
         {
             perror("fopen");
             goto done;
@@ -78,11 +79,10 @@ namespace Utils
         // libLoaded = true;
         char line[512] = {0};
         FILE *fp = fopen("/proc/self/maps", "rt");
-        if (fp != NULL)
+        if (fp != nullptr)
         {
             while (fgets(line, sizeof(line), fp))
             {
-                std::string a = line;
                 if (strstr(line, libraryName))
                 {
                     libLoaded = true;
@@ -93,6 +93,7 @@ namespace Utils
         }
         return false;
     }
+
     ADDRESS getRealOffset(ADDRESS address)
     {
         if (libBase == 0)
@@ -100,6 +101,15 @@ namespace Utils
             libBase = findLibrary(libName).startAddress;
         }
         return (libBase + address);
+    }
+
+    ADDRESS getLibOffset(ADDRESS address)
+    {
+        if (libBase == 0)
+        {
+            libBase = findLibrary(libName).startAddress;
+        }
+        return (libBase - address);
     }
 
     bool isUnityGame()
@@ -130,37 +140,33 @@ namespace Utils
     char *readFileContent(const char *filename)
     {
         FILE *file = fopen(filename, "r");
-        if (file == NULL)
+        if (file == nullptr)
         {
             perror("Error opening file");
-            return NULL;
+            return nullptr;
         }
 
-        // Tentukan ukuran file
         fseek(file, 0, SEEK_END);
         long file_size = ftell(file);
         rewind(file);
 
-        // Alokasikan buffer untuk menyimpan isi file
         char *buffer = (char *)malloc(file_size + 1);
-        if (buffer == NULL)
+        if (buffer == nullptr)
         {
             perror("Error allocating memory");
             fclose(file);
-            return NULL;
+            return nullptr;
         }
 
-        // Baca isi file ke dalam buffer
         size_t result = fread(buffer, 1, file_size, file);
         if (result != file_size)
         {
             perror("Error reading file");
             free(buffer);
             fclose(file);
-            return NULL;
+            return nullptr;
         }
 
-        // Tambahkan null-terminator pada akhir buffer
         buffer[file_size] = '\0';
 
         fclose(file);
