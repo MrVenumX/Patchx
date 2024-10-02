@@ -3,6 +3,7 @@
 #include "KittyMemory/MemoryPatch.h"
 #include "Includes/GlossHook/Gloss.h"
 #include "Includes/Dobby/dobby.h"
+#include "Includes/AssetManager.h"
 #include "Includes/Logger.h"
 #include "Includes/Utils.h"
 #include "Includes/Macros.h"
