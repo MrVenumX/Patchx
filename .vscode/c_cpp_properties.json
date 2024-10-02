@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${default}"
+            ],
+            "defines": ["USING_JNI", "REMOTESHELL"],
+            "compilerPath": "/usr/bin/clang++"
+        }
+    ],
+    "version": 4
+}
