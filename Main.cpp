@@ -7,6 +7,9 @@
 #include "Includes/Utils.h"
 #include "Includes/Macros.h"
 #include "Il2cpp/Il2cpp.hpp"
+#include "JNIStuff.h"
+
+JNIStuff JStuff;
 
 // DECL_HOOK(bool, MakeMeReturnTrue) {
 //     return true;
@@ -59,4 +62,20 @@ __attribute__((constructor)) void lib_main()
 {
     pthread_t hacks;
     pthread_create(&hacks, NULL, hack_thread, NULL);
+
+
+
+extern "C"
+{
+    JNIEXPORT jint JNI_OnLoad(JavaVM *jvm, void *revesed)
+    {
+        JNIEnv *env;
+        jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+        JStuff.setJavaVM(jvm);
+
+        // Example:
+        // JStuff.showToast(JStuff, JStuff.getGlobalContext(JStuff), "Hello", 1);
+
+        return JNI_VERSION_1_6;
+    }
 }
