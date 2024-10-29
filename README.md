@@ -42,7 +42,7 @@ For **MT Manager** you can follow this intruction:
 6. Press Back Button and click **Save & Exit**
 7. Then install Target APK you already Patch using **MT Manager**
 
-NOTE: I recommended you for change or use '''android:extractNativeLibs="true"''' for prevent some issues.
+NOTE: I recommended you for change or use `android:extractNativeLibs="true"` for prevent some issues.
 
 By following this step, now you success to Patch you own APK.
 
